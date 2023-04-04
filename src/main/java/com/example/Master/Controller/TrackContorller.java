@@ -1,6 +1,8 @@
 package com.example.Master.Controller;
 
 import com.example.Master.Domain.Track;
+import com.example.Master.Exceptions.TrackAlreadyExistException;
+import com.example.Master.Exceptions.TrackNotFoundExceptoin;
 import com.example.Master.Services.ITrackServices;
 import com.example.Master.Services.ITrackServicesImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,15 @@ public class TrackContorller {
         this.iTrackServices = iTrackServicesImp;
     }
     @PostMapping("/addTrack")
-    public ResponseEntity<?> addTrack(@RequestBody Track track){
-        return new ResponseEntity<>(iTrackServices.saveTrack(track), HttpStatus.CREATED);
+    public ResponseEntity<?> addTrack(@RequestBody Track track) throws TrackAlreadyExistException {
+        try{
+            return new ResponseEntity<>(iTrackServices.saveTrack(track), HttpStatus.CREATED);
+        }catch (TrackAlreadyExistException exception){
+            throw exception;
+        }
     }
     @DeleteMapping("/deleteTrack/{id}")
-    public ResponseEntity<?> deleteTrack(@PathVariable int id){
+    public ResponseEntity<?> deleteTrack(@PathVariable int id) throws TrackNotFoundExceptoin {
         return new ResponseEntity<>(iTrackServices.deleteTrack(id), HttpStatus.OK);
     }
     @GetMapping("/tracks")

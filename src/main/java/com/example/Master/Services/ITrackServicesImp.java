@@ -1,6 +1,8 @@
 package com.example.Master.Services;
 
 import com.example.Master.Domain.Track;
+import com.example.Master.Exceptions.TrackAlreadyExistException;
+import com.example.Master.Exceptions.TrackNotFoundExceptoin;
 import com.example.Master.Repository.ITrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +19,21 @@ public class ITrackServicesImp implements ITrackServices{
     }
 
     @Override
-    public Track saveTrack(Track track) {
-        return iTrackRepository.save(track);
+    public Track saveTrack(Track track) throws TrackAlreadyExistException {
+        if(iTrackRepository.findById(track.getTrackId()).isEmpty()){
+            return iTrackRepository.insert(track);
+        }else{
+            throw new TrackAlreadyExistException();
+        }
     }
 
     @Override
-    public boolean deleteTrack(int id) {
-        iTrackRepository.deleteById(id);
-        return true;
+    public boolean deleteTrack(int id) throws TrackNotFoundExceptoin {
+        if(iTrackRepository.findById(id).isEmpty()){
+            throw new TrackNotFoundExceptoin();
+        }else {
+            return true;
+        }
     }
 
     @Override
