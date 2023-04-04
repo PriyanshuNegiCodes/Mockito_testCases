@@ -21,11 +21,7 @@ public class TrackContorller {
     }
     @PostMapping("/addTrack")
     public ResponseEntity<?> addTrack(@RequestBody Track track) throws TrackAlreadyExistException {
-        try{
-            return new ResponseEntity<>(iTrackServices.saveTrack(track), HttpStatus.CREATED);
-        }catch (TrackAlreadyExistException exception){
-            throw exception;
-        }
+        return new ResponseEntity<>(iTrackServices.saveTrack(track), HttpStatus.CREATED);
     }
     @DeleteMapping("/deleteTrack/{id}")
     public ResponseEntity<?> deleteTrack(@PathVariable int id) throws TrackNotFoundExceptoin {
