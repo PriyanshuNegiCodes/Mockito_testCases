@@ -34,7 +34,7 @@ public class MasterServicesTest {
         track=new Track(101, "song1", 4, artist);
         artist=new Artist(100, "Name1");
         track1=new Track(102, "song2", 4, artist1);
-        artist1=new Artist(101, "Justin");
+        artist1=new Artist(101, "Justin Bieber");
     }
 
     @AfterEach
@@ -70,12 +70,15 @@ public class MasterServicesTest {
         List<Track> fetchTracks=iTrackRepository.findAll();
         assertEquals("Deleted",1,fetchTracks.size() );
     }
-//    @Test
-//    public void getByName(){
-//        iTrackRepository.insert(track);
-//        iTrackRepository.insert(track1);
-//        List<Track> fetchTracks=iTrackRepository.getJustinTracks();
-//        assertEquals("Fetched","Justin",);
-//    }
+    @Test
+    public void getByName(){
+        iTrackRepository.insert(track);
+        iTrackRepository.insert(track1);
+        List<Track> fetchTracks=iTrackRepository.getJustinTracks();
+        String temp=fetchTracks.get(0).getTrackArtist().getArtistName();
+        assertEquals("Fetched","Justin Bieber",temp);
+
+    }
+
 
 }
