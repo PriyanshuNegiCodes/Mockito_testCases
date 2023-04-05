@@ -47,6 +47,16 @@ class MasterApplicationTests {
 	}
 
 	@Test
+	public void testAddTrackSuccess() throws TrackAlreadyExistException {
+		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.ofNullable(null));
+		when(iTrackRepository.insert(track)).thenReturn(track);
+		Track insertedTrack=iTrackServices.saveTrack(track);
+		assertEquals("inserted",insertedTrack, track);
+		verify(iTrackRepository, times(1)).findById(track.getTrackId());
+		verify(iTrackRepository, times(1)).insert(track);
+	}
+
+	@Test
 	public void testAddTrackFailure() throws TrackAlreadyExistException{
 		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.ofNullable(track));
 		assertThrows(TrackAlreadyExistException.class, ()->iTrackServices.saveTrack(track));
