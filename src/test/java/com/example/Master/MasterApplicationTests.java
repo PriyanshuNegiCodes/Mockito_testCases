@@ -52,7 +52,6 @@ class MasterApplicationTests {
 		assertThrows(TrackAlreadyExistException.class, ()->iTrackServices.saveTrack(track));
 
 	}
-
 	@Test
 	public void testDeleteTrackSuccess() throws TrackNotFoundExceptoin {
 		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.of(track));
