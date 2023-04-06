@@ -16,8 +16,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 
 @ExtendWith(SpringExtension.class)
 @DataMongoTest
@@ -31,10 +32,14 @@ public class MasterServicesTest {
     private Artist artist1;
     @BeforeEach
     public void setUp(){
-        track=new Track(101, "song1", 4, artist);
         artist=new Artist(100, "Name1");
-        track1=new Track(102, "song2", 4, artist1);
+        track=new Track(101, "song1", 4, artist);
+
         artist1=new Artist(101, "Justin Bieber");
+        track1=new Track(102, "song2", 4, artist1);
+
+        iTrackRepository.deleteAll();
+
     }
 
     @AfterEach
@@ -48,11 +53,11 @@ public class MasterServicesTest {
 
     @Test
     public void testAddTrackSuccess(){
-        assertEquals("Inserted", iTrackRepository.save(track), track);
+        assertEquals( iTrackRepository.save(track), track);
     }
     @Test
     public void testAddTrackFail(){
-        assertNotEquals("Inserted", iTrackRepository.save(track), track1);
+        assertNotEquals( iTrackRepository.save(track), track1);
     }
     @Test
     public void deleteTrackSuccess(){
@@ -60,7 +65,7 @@ public class MasterServicesTest {
         iTrackRepository.insert(track1);
         iTrackRepository.deleteById(track.getTrackId());
         List<Track> fetchTracks=iTrackRepository.findAll();
-        assertEquals("Deleted",1,fetchTracks.size() );
+        assertEquals(1,fetchTracks.size() );
     }
     @Test
     public void deleteTrackFail(){
@@ -68,17 +73,15 @@ public class MasterServicesTest {
         iTrackRepository.insert(track1);
         iTrackRepository.deleteById(track.getTrackId());
         List<Track> fetchTracks=iTrackRepository.findAll();
-        assertEquals("Deleted",1,fetchTracks.size() );
+        assertEquals(1,fetchTracks.size() );
     }
     @Test
     public void getByName(){
         iTrackRepository.insert(track);
         iTrackRepository.insert(track1);
+        System.out.println(iTrackRepository.findAll());
         List<Track> fetchTracks=iTrackRepository.getJustinTracks();
-        String temp=fetchTracks.get(0).getTrackArtist().getArtistName();
-        assertEquals("Fetched","Justin Bieber",temp);
-
+        System.out.println(fetchTracks.size());
+        assertEquals("Justin Bieber",fetchTracks.get(0).getTrackArtist().getArtistName());
     }
-
-
 }

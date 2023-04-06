@@ -14,8 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,8 +38,9 @@ class MasterApplicationTests {
 	private Artist artist;
 	@BeforeEach
 	public void setUp(){
-		track=new Track(101, "song1", 4, artist);
-		artist=new Artist(100, "Name1");
+
+		track=new Track(102, "song1", 4, new Artist(101, "Justin Beiber"));
+
 	}
 
 	@AfterEach
@@ -77,5 +80,14 @@ class MasterApplicationTests {
 		assertThrows(TrackNotFoundExceptoin.class, () -> iTrackServices.deleteTrack(track.getTrackId()));
 		verify(iTrackRepository,times(1)).findById(track.getTrackId());
 		verify(iTrackRepository,times(0)).deleteById(track.getTrackId());
+	}
+	@Test
+	public void justinSuccess() throws TrackNotFoundExceptoin {
+		iTrackRepository.insert(track);
+		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.ofNullable(null));
+//		when(iTrackRepository.getJustinTracks()).then();
+		List<Track> fetchList=iTrackRepository.getJustinTracks();
+		assertEquals("inserted","Justin Beiber", fetchList.get(0).getTrackArtist().getArtistName());
+
 	}
 }

@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @ToString
 @Data
-@EqualsAndHashCode
 
 public class Artist {
     private int artistId;
