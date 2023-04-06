@@ -93,6 +93,8 @@ class MasterApplicationTests {
 		assertEquals("Justin Bieber", fetchList.get(0).getTrackArtist().getArtistName());
 	}
 
+
+
 	@Test
 	public void justinFail(){
 		List<Track> tracks = new ArrayList<>();
