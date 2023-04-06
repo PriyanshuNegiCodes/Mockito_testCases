@@ -17,12 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,10 +36,12 @@ class MasterApplicationTests {
 
 	private Track track;
 	private Artist artist;
+	private Track track1;
 	@BeforeEach
 	public void setUp(){
 
-		track=new Track(102, "song1", 4, new Artist(101, "Justin Beiber"));
+		track=new Track(102, "song1", 4, new Artist(101, "Justin Bieber"));
+		track1=new Track(103, "song2", 4, new Artist(101, "Random-Name"));
 
 	}
 
@@ -47,6 +49,7 @@ class MasterApplicationTests {
 	public void tearDown(){
 		track=null;
 		artist=null;
+		track1=null;
 	}
 
 	@Test
@@ -54,7 +57,7 @@ class MasterApplicationTests {
 		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.ofNullable(null));
 		when(iTrackRepository.insert(track)).thenReturn(track);
 		Track insertedTrack=iTrackServices.saveTrack(track);
-		assertEquals("inserted",insertedTrack, track);
+		assertEquals(insertedTrack, track);
 		verify(iTrackRepository, times(1)).findById(track.getTrackId());
 		verify(iTrackRepository, times(1)).insert(track);
 	}
@@ -70,7 +73,7 @@ class MasterApplicationTests {
 		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.of(track));
 //		when(iTrackRepository.deleteById(track.getTrackId())).thenReturn(true);
 		boolean result=iTrackServices.deleteTrack(track.getTrackId());
-		assertEquals("deleted",true, result);
+		assertEquals(true, result);
 		verify(iTrackRepository,times(1)).findById(track.getTrackId());
 		verify(iTrackRepository,times(0)).deleteById(track.getTrackId());
 	}
@@ -82,12 +85,19 @@ class MasterApplicationTests {
 		verify(iTrackRepository,times(0)).deleteById(track.getTrackId());
 	}
 	@Test
-	public void justinSuccess() throws TrackNotFoundExceptoin {
-		iTrackRepository.insert(track);
-		when(iTrackRepository.findById(track.getTrackId())).thenReturn(Optional.ofNullable(null));
-//		when(iTrackRepository.getJustinTracks()).then();
-		List<Track> fetchList=iTrackRepository.getJustinTracks();
-		assertEquals("inserted","Justin Beiber", fetchList.get(0).getTrackArtist().getArtistName());
-
+	public void justinSuccess(){
+		List<Track> tracks = new ArrayList<>();
+		tracks.add(track);
+		when(iTrackRepository.getJustinTracks()).thenReturn(tracks);
+		List<Track> fetchList=iTrackServices.getJustin();
+		assertEquals("Justin Bieber", fetchList.get(0).getTrackArtist().getArtistName());
+	}
+	@Test
+	public void justinFail(){
+		List<Track> tracks = new ArrayList<>();
+		tracks.add(track1);
+		when(iTrackRepository.getJustinTracks()).thenReturn(tracks);
+		List<Track> fetchList=iTrackServices.getJustin();
+		assertNotEquals("Justin Bieber", fetchList.get(0).getTrackArtist().getArtistName());
 	}
 }
